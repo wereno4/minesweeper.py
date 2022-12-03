@@ -1,4 +1,4 @@
-import random, time, sys, os
+import random, sys, os
 
 global row, column, mine_count, victory_count
 
