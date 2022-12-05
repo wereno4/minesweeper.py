@@ -162,11 +162,11 @@ def move(arg: str):
 
 
 def assis():
-    global assistant
+    try_assistant = True
     loop_count = 0
-    while assistant:
+    while try_assistant:
         if loop_count > row * column * 10:
-            assistant = False
+            try_assistant = False
             break
         starting_x: int = random.randrange(0, row)
         starting_y: int = random.randrange(0, column)
@@ -193,8 +193,14 @@ def assis():
                         continue
                     else:
                         find_additional_mine(i,j)
-                        assistant = False
+                        try_assistant = False
         loop_count += 1
+
+
+def reset_map():
+    for i in range(row):
+        for j in range(column):
+            room[i][j] = " "
 
 
 create_mine()
@@ -215,7 +221,19 @@ while True:
 
     if mine_exploded:
         print("지뢰가 터졌습니다.")
-        exit()
+        print("같은 맵으로 다시 하시려면 y를 눌러주세요. 종료하시려면 Enter를 눌러주세요.")
+        key = None
+        while key == None:
+            key = keyboard.read_key()
+            if key == 'y':
+                reset_map()
+                if assistant:
+                    assis()
+                mine_exploded = False
+            elif key == 'enter':
+                print('안녕히가세요!')
+                exit()
+        continue
     print("방향키로 이동, f로 조사, c로 깃발 꽂기, ESC로 종료.")
     key = None
     while key == None:
