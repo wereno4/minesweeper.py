@@ -231,6 +231,7 @@ while True:
                     assis()
                 mine_exploded = False
             elif key == 'enter':
+                clear()
                 print('안녕히가세요!')
                 exit()
         continue
