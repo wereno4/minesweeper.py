@@ -197,6 +197,12 @@ def assis():
         loop_count += 1
 
 
+def reset_map():
+    for i in range(row):
+        for j in range(column):
+            room[i][j] = " "
+
+
 create_mine()
 mine_exploded: bool = False
 if assistant:
@@ -220,7 +226,7 @@ while True:
         while key == None:
             key = keyboard.read_key()
             if key == 'y':
-                room =[[" " for x in range(0,column)] for y in range(0,row)]
+                reset_map()
                 if assistant:
                     assis()
                 mine_exploded = False
@@ -243,6 +249,6 @@ while True:
             time.sleep(0.1)
         if key == 'esc':
             clear()
-            print("안녕히가세요!")
+            print("\n안녕히가세요!")
             exit()
         time.sleep(0.1)
