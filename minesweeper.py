@@ -248,6 +248,7 @@ while True:
             check_flag(location[0], location[1])
             time.sleep(0.1)
         if key == 'esc':
+            clear()
             print("\n안녕히가세요!")
             exit()
         time.sleep(0.1)
