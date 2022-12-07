@@ -11,6 +11,7 @@ mine_count: int = 0
 location: list[int] = [0,0]
 win: bool = False
 assistant: bool = False
+colourmap: bool = True
 known: bool = False
 try:
     for i in range(len(sys.argv)):
@@ -28,6 +29,8 @@ try:
             known = True
         if sys.argv[i] == "--assistant":
             assistant = True
+        if sys.argv[i] == "--colourless":
+            colourmap = False
 except:
     print("매개변수 오류")
     exit()
@@ -50,7 +53,6 @@ def create_mine():
     global mine_count
     for i in range(0, row):
         for j in range(0, column):
-            random.seed()
             if random.random() <= percentage:
                 mine[i][j] = True
                 mine_count += 1
@@ -198,9 +200,13 @@ def assis():
 
 
 def reset_map():
+    global flag_count, victory_count, mine_exploded 
     for i in range(row):
         for j in range(column):
             room[i][j] = " "
+    flag_count = 0
+    victory_count = 0 
+    mine_exploded = False
 
 
 create_mine()
@@ -211,10 +217,21 @@ while True:
     clear()
     print("%d개의 지뢰가 있습니다." % mine_count)
     print("깃발의 갯수: %d" % flag_count)
-    for i in range(0, column):
-        for j in range(0, row):
-            print("[%s]" % ("A" if location[0] == j and location[1] == i and room[j][i] != "X" and not win else str(room[j][i])), end="")
-        print("")
+    if colourmap:
+        for i in range(0, column):
+            for j in range(0, row):
+                colour = 37
+                if location[0] == j and location[1] == i and not mine_exploded and not win:
+                    colour = 94
+                elif room[j][i] == "!":
+                    colour = 91
+                print(f"\033[{colour}m"+f"[{room[j][i]}]", end="")
+            print("\033[0m")
+    else:
+        for i in range(0, column):
+            for j in range(0, row):
+                print("[%s]" % ("A" if location[0] == j and location[1] == i and room[j][i] != "X" and not win else str(room[j][i])), end="")
+            print("")
     if win:
         print("지뢰를 모두 찾아내셨습니다!")
         exit()
@@ -229,7 +246,6 @@ while True:
                 reset_map()
                 if assistant:
                     assis()
-                mine_exploded = False
             elif key == 'enter':
                 clear()
                 print('안녕히가세요!')
@@ -249,6 +265,6 @@ while True:
             time.sleep(0.1)
         if key == 'esc':
             clear()
-            print("\n안녕히가세요!")
+            print("안녕히가세요!")
             exit()
         time.sleep(0.1)
