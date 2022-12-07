@@ -224,6 +224,8 @@ while True:
                 if location[0] == j and location[1] == i and not mine_exploded and not win:
                     colour = 94
                 elif room[j][i] == "!":
+                    colour = 93
+                elif room[j][i]== "X":
                     colour = 91
                 print(f"\033[{colour}m"+f"[{room[j][i]}]", end="")
             print("\033[0m")
