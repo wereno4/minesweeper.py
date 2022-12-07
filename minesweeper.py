@@ -200,63 +200,77 @@ def assis():
 
 
 def reset_map():
-    global flag_count, victory_count, mine_exploded 
+    global flag_count, victory_count, mine_exploded , start_time
     for i in range(row):
         for j in range(column):
             room[i][j] = " "
     flag_count = 0
     victory_count = 0 
     mine_exploded = False
+    start_time = time.time()
+
+
+def keypress() -> bool:
+    return keyboard.is_pressed('up') or \
+        keyboard.is_pressed('down') or \
+        keyboard.is_pressed('left') or \
+        keyboard.is_pressed('right') or \
+        keyboard.is_pressed('f') or \
+        keyboard.is_pressed('c') or \
+        keyboard.is_pressed('esc')
 
 
 create_mine()
 mine_exploded: bool = False
 if assistant:
     assis()
+start_time = time.time()
 while True:
-    clear()
-    print("%d개의 지뢰가 있습니다." % mine_count)
-    print("깃발의 갯수: %d" % flag_count)
-    if colourmap:
-        for i in range(0, column):
-            for j in range(0, row):
-                colour = 37
-                if location[0] == j and location[1] == i and not mine_exploded and not win:
-                    colour = 94
-                elif room[j][i] == "!":
-                    colour = 93
-                elif room[j][i]== "X":
-                    colour = 91
-                print(f"\033[{colour}m"+f"[{room[j][i]}]", end="")
-            print("\033[0m")
-    else:
-        for i in range(0, column):
-            for j in range(0, row):
-                print("[%s]" % ("A" if location[0] == j and location[1] == i and room[j][i] != "X" and not win else str(room[j][i])), end="")
-            print("")
-    if win:
-        print("지뢰를 모두 찾아내셨습니다!")
-        exit()
-
-    if mine_exploded:
-        print("지뢰가 터졌습니다.")
-        print("같은 맵으로 다시 하시려면 y를 눌러주세요. 종료하시려면 Enter를 눌러주세요.")
-        key = None
-        while key == None:
-            key = keyboard.read_key()
-            if key == 'y':
-                reset_map()
-                if assistant:
-                    assis()
-            elif key == 'enter':
-                clear()
-                print('안녕히가세요!')
-                exit()
-        continue
-    print("방향키로 이동, f로 조사, c로 깃발 꽂기, ESC로 종료.")
     key = None
     while key == None:
-        key = keyboard.read_key()
+        clear()
+        print("%d개의 지뢰가 있습니다." % mine_count)
+        print("깃발의 갯수: %d" % flag_count)
+        if colourmap:
+            for i in range(0, column):
+                for j in range(0, row):
+                    colour = 37
+                    if location[0] == j and location[1] == i and not mine_exploded and not win:
+                        colour = 94
+                    elif room[j][i] == "!":
+                        colour = 93
+                    elif room[j][i]== "X":
+                        colour = 91
+                    print(f"\033[{colour}m"+f"[{room[j][i]}]", end="")
+                print("\033[0m")
+        else:            
+            for i in range(0, column):
+                for j in range(0, row):
+                    print("[%s]" % ("A" if location[0] == j and location[1] == i and room[j][i] != "X" and not win else str(room[j][i])), end="")
+                print("")
+        current_time = time.time()
+        print(f"경과시간: {int(current_time - start_time)}초")
+        if win:
+            print("지뢰를 모두 찾아내셨습니다!")
+            exit()
+
+        if mine_exploded:
+            print("지뢰가 터졌습니다.")
+            print("같은 맵으로 다시 하시려면 y를 눌러주세요. 종료하시려면 Enter를 눌러주세요.")
+            key = None
+            while key == None:
+                key = keyboard.read_key()
+                if key == 'y':
+                    reset_map()
+                    if assistant:
+                        assis()
+                elif key == 'enter':
+                    clear()
+                    print('안녕히가세요!')
+                    exit()
+            continue
+        print("방향키로 이동, f로 조사, c로 깃발 꽂기, ESC로 종료.")
+        key = keyboard.read_key() if keypress() else None
         if key == 'up' or key == 'down' or key == 'left' or key == 'right':
             move(key)
         if key == 'f':
@@ -264,7 +278,6 @@ while True:
                 mine_exploded = True
         if key == 'c':
             check_flag(location[0], location[1])
-            time.sleep(0.1)
         if key == 'esc':
             clear()
             print("안녕히가세요!")
